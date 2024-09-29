@@ -1,0 +1,61 @@
+{
+  "students": [
+    {
+      "name": "Jerry",
+      "age": "20",
+      "id": "1"
+    },
+    {
+      "name": "Tom",
+      "age": "18",
+      "id": "2"
+    },
+    {
+      "name": "dd",
+      "age": "22",
+      "id": "3"
+    },
+    {
+      "name": "Yapi",
+      "age": "20",
+      "id": "4"
+    },
+    {
+      "id": "5",
+      "name": "John the Baptist",
+      "age": "33"
+    },
+    {
+      "id": "6",
+      "name": "Jonathan Park",
+      "age": "23"
+    }
+  ],
+  "courses": [
+    {
+      "id": "1",
+      "cname": "Open source studio",
+      "credit": 3
+    },
+    {
+      "id": "2",
+      "cname": "Programming studio",
+      "credit": 2
+    },
+    {
+      "id": "4",
+      "cname": "JavaScript",
+      "credit": "2"
+    },
+    {
+      "id": "5",
+      "cname": "C programming",
+      "credit": "2"
+    },
+    {
+      "id": "6",
+      "cname": "Python Programming",
+      "credit": "3"
+    }
+  ]
+}

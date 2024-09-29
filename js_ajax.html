@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+        window.onload = function () {
+            let btnStu = document.getElementById("btnStu");
+            let btnAdd = document.getElementById("btnAdd");
+            let btnClass = document.getElementById("btnClass");
+            let btnAddClass = document.getElementById("btnAddClass");
+            btnStu.addEventListener("click", getStudents);
+            btnAdd.addEventListener("click", postData);
+            btnClass.addEventListener("click", getClasses);
+            btnAddClass.addEventListener("click", postDataClasses);
+        }
+        function getStudents() {
+            let contents = document.getElementById("contents");
+            const xhr = new XMLHttpRequest();    
+            
+            xhr.open("GET", "http://localhost:3000/students");    
+            xhr.setRequestHeader("Content-type", "application/json");    
+            xhr.send();    
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const res = JSON.parse(xhr.response);
+                    contents.innerHTML = makeList(res);        
+                } else {
+                    console.log(xhr.status, xhr.statusText);        
+                }    
+            }
+        }
+
+
+        function getClasses() {
+            let contentsClasses = document.getElementById("contentsClasses");
+            const xhr = new XMLHttpRequest();    
+            
+            xhr.open("GET", "http://localhost:3000/courses");    
+            xhr.setRequestHeader("Content-type", "application/json");    
+            xhr.send();    
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const res = JSON.parse(xhr.response);
+                    contentsClasses.innerHTML = makeListClasses(res);        
+                } else {
+                    console.log(xhr.status, xhr.statusText);        
+                }    
+            }
+        }
+
+
+
+        function makeList(data) {
+            let str = "<ul>";
+                for (key in data) {
+                    //console.log("Name :" + data[key].name + " , age :" + data[key].age);
+                    str += "<li> " + data[key].name + " (" + data[key].age + ")<button onclick='updateData(" + data[key].id + ")'>수정</button><button onclick='deleteData(" + data[key].id + ")'>삭제</button></li>";    
+                }
+                str += "</ul>";
+                return str;
+        }
+
+        
+        function makeListClasses(data) {
+            let str = "<ul>";
+                for (key in data) {
+                    //console.log("Name :" + data[key].name + " , age :" + data[key].age);
+                    str += "<li> " + data[key].cname + " (" + data[key].credit + ")<button onclick='updateDataClasses(" + data[key].id + ")'>수정</button><button onclick='deleteDataClasses(" + data[key].id + ")'>삭제</button></li>";    
+                }
+                str += "</ul>";
+                return str;
+        }
+
+        function postData() {
+
+            let contents = document.getElementById("contents");
+            let name = document.getElementById("name");
+            let age = document.getElementById("age");
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/students");
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.send();
+
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const students = JSON.parse(xhr.response);
+                    let maxId = students.length > 0 ? Math.max(...students.map(student => student.id)) : 0;
+                    let newId = String(maxId + 1); 
+                    let newStudent = {
+                        id: newId, 
+                        name: name.value,
+                        age: age.value
+                    };
+            
+            const postXhr = new XMLHttpRequest();
+
+            postXhr.open("POST", "http://localhost:3000/students");    
+            postXhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+            postXhr.send(JSON.stringify(newStudent));    
+            postXhr.onload = () => {
+                if (postXhr.status === 201) {
+                    name.value = "";
+                    age.value = "";
+                    getStudents() ;        
+                } else {
+                    console.log(postXhr.status, postXhr.statusText);        
+                }    
+            };
+        } else {
+            console.log(xhr.status, xhr.statusText);
+        }
+    };
+}
+
+
+        function postDataClasses() {
+
+            let contentsClasses = document.getElementById("contentsClasses");
+            let cname = document.getElementById("cname");
+            let credit = document.getElementById("credit");
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/courses");
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.send();
+
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const classes = JSON.parse(xhr.response);
+                    let maxId = classes.length > 0 ? Math.max(...classes.map(classes => classes.id)) : 0;
+                    let newId = String(maxId + 1); 
+                    let newClasses = {
+                        id: newId, 
+                        cname: cname.value,
+                        credit: credit.value
+                    };
+            
+            const postXhr = new XMLHttpRequest();
+
+            postXhr.open("POST", "http://localhost:3000/courses");    
+            postXhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+            postXhr.send(JSON.stringify(newClasses));    
+            postXhr.onload = () => {
+                if (postXhr.status === 201) {
+                    cname.value = "";
+                    credit.value = "";
+                    getClasses() ;        
+                } else {
+                    console.log(postXhr.status, postXhr.statusText);        
+                }    
+            };
+        } else {
+            console.log(xhr.status, xhr.statusText);
+        }
+    };
+}
+
+
+        function updateData(id) {           
+            let name = document.getElementById("editName");
+            let age = document.getElementById("editAge"); 
+            const xhr = new XMLHttpRequest();        
+            xhr.open("PUT", "http://localhost:3000/students/" + id);        
+            
+            xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+            const data = { name: name.value, age: age.value };        
+            xhr.send(JSON.stringify(data));        
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const res = JSON.parse(xhr.response);                
+                    console.log(res);                
+                    getStudents();            
+                } else {                
+                    console.log(xhr.status, xhr.statusText);            
+                }        
+            }            
+        }
+
+        function updateDataClasses(id) {           
+            let cname = document.getElementById("editClasses");
+            let credit = document.getElementById("editCredits"); 
+            const xhr = new XMLHttpRequest();        
+            xhr.open("PUT", "http://localhost:3000/courses/" + id);        
+            
+            xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+            const data = { cname: cname.value, credit: credit.value };        
+            xhr.send(JSON.stringify(data));        
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    const res = JSON.parse(xhr.response);                
+                    console.log(res);                
+                    getClasses();            
+                } else {                
+                    console.log(xhr.status, xhr.statusText);            
+                }        
+            }            
+        }
+
+        function deleteData(id) {           
+            const xhr = new XMLHttpRequest();        
+            xhr.open("DELETE", "http://localhost:3000/students/" + id);        
+            
+            xhr.setRequestHeader("Content-type", "application/json");
+            const data = { name: name.value, age: age.value };        
+            xhr.send();        
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {        
+                    console.log('One student has been deleted');                
+                    getStudents();            
+                } else {                
+                    console.log(xhr.status, xhr.statusText);            
+                }        
+            }          
+        }
+
+        function deleteDataClasses(id) {           
+            const xhr = new XMLHttpRequest();        
+            xhr.open("DELETE", "http://localhost:3000/courses/" + id);        
+            
+            xhr.setRequestHeader("Content-type", "application/json");
+            const data = { cname: cname.value, credit: credit.value };        
+            xhr.send();        
+            
+            xhr.onload = () => {
+                if (xhr.status === 200) {        
+                    console.log('One lecture has been deleted');                
+                    getClasses();            
+                } else {                
+                    console.log(xhr.status, xhr.statusText);            
+                }        
+            }          
+        }
+
+
+    </script>
+
+</head>
+<body>
+    <div class="container mt-5">
+    <div class="d-flex justify-content-between" style="width:100%">
+    <div id="studentLayout" class="d-flex justify-content-center">
+    <button id="btnStu">학생데이터 가져오기</button>
+    <button id="btnAdd">학생데이터 추가</button><br>
+    <input type="text" id="name" placeholder="이름">
+    <input type="number" id="age" placeholder="나이"><br>
+    <input type="text" id="editName" placeholder="수정할 이름">
+    <input type="text" id="editAge" placeholder="수정할 나이">
+    <div id="contents" style="width:400px;height:300px;background-color: lightgoldenrodyellow;"></div>
+    </div>
+
+    <br>
+    <div id="classLayout" class="d-flex justify-content-center">
+    <button id="btnClass">강의데이터 가져오기</button>
+    <button id="btnAddClass">강의데이터 추가</button><br>
+    <input type="text" id="cname" placeholder="강의제목">
+    <input type="number" id="credit" placeholder="학점"><br>
+    <input type="text" id="editClasses" placeholder="수정할 강의제목">
+    <input type="text" id="editCredits" placeholder="수정할 학점">
+    <div id="contentsClasses" style="width:400px;height:300px;background-color: lightgoldenrodyellow;"></div>
+    </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
