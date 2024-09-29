@@ -5,3 +5,5 @@
 #### Week5 Assignment#4-1_Lab1 : JS AJAX 실습
 
 Netlify 주소: https://younggeeweek3assignment.netlify.app/
+
+깃허브 주소: https://github.com/Joshuaii3712/24-2-OSS-Week-3
